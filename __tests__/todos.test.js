@@ -15,14 +15,11 @@ describe('app routes', () => {
     return mongoose.connection.dropDatabase();
   });
 
-  let todos;
+  let todo;
   beforeEach(async() => {
-    todos = await Todo.create({
+    todo = await Todo.create({
       name: 'Finish This Lab',
       description: 'Like now'
-    }, {
-      name: 'You really Need',
-      description: 'to finish this lab'
     }
     );
   });
@@ -49,6 +46,13 @@ describe('app routes', () => {
   });
 
   it('gets all todos', async() => {
+    const todos = await Todo.create({
+      name: 'Finish This Lab',
+      description: 'Like now'
+    }, {
+      name: 'You really Need',
+      description: 'to finish this lab'
+    });
     return request(app)
       .get('/api/v1/todos')
       .then(res => {
@@ -64,11 +68,6 @@ describe('app routes', () => {
   });
 
   it('gets a todo by id', async() => {
-    const todo = await Todo.create({
-      name: 'Finish This Lab',
-      description: 'Like now'
-    });
-
     return request(app)
       .get(`/api/v1/todos/${todo._id}`)
       .then(res => {
@@ -76,6 +75,20 @@ describe('app routes', () => {
           _id: expect.any(String),
           name: 'Finish This Lab',
           description: 'Like now',
+          __v: 0
+        });
+      });
+  });
+
+  it('updates a todo by id', async() => {
+    return request(app)
+      .patch(`/api/v1/todos/${todo._id}`)
+      .send({ description: 'You really need to do this' })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Finish This Lab',
+          description: 'You really need to do this',
           __v: 0
         });
       });
