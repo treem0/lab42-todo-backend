@@ -48,7 +48,7 @@ describe('app routes', () => {
       });
   });
 
-  it('gets all todos', () => {
+  it('gets all todos', async() => {
     return request(app)
       .get('/api/v1/todos')
       .then(res => {
@@ -59,6 +59,24 @@ describe('app routes', () => {
             description: todo.description,
             __v: 0
           });
+        });
+      });
+  });
+
+  it('gets a todo by id', async() => {
+    const todo = await Todo.create({
+      name: 'Finish This Lab',
+      description: 'Like now'
+    });
+
+    return request(app)
+      .get(`/api/v1/todos/${todo._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Finish This Lab',
+          description: 'Like now',
+          __v: 0
         });
       });
   });
