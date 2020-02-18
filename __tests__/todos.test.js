@@ -15,12 +15,16 @@ describe('app routes', () => {
     return mongoose.connection.dropDatabase();
   });
 
-  let todo;
+  let todos;
   beforeEach(async() => {
-    todo = await Todo.create({
+    todos = await Todo.create({
       name: 'Finish This Lab',
       description: 'Like now'
-    });
+    }, {
+      name: 'You really Need',
+      description: 'to finish this lab'
+    }
+    );
   });
 
   afterAll(() => {
@@ -40,6 +44,21 @@ describe('app routes', () => {
           name: 'Do it',
           description: 'now',
           __v: 0
+        });
+      });
+  });
+
+  it('gets all todos', () => {
+    return request(app)
+      .get('/api/v1/todos')
+      .then(res => {
+        todos.forEach(todo => {
+          expect(res.body).toContainEqual({
+            _id: expect.any(String),
+            name: todo.name,
+            description: todo.description,
+            __v: 0
+          });
         });
       });
   });
