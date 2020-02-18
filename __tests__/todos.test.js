@@ -93,4 +93,17 @@ describe('app routes', () => {
         });
       });
   });
+
+  it('deletes a todo by id', async() => {
+    return request(app)
+      .delete(`/api/v1/todos/${todo._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Finish This Lab',
+          description: 'Like now',
+          __v: 0
+        });
+      });
+  });
 });
